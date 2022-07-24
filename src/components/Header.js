@@ -3,11 +3,12 @@ import { styled } from '@mui/material/styles';
 import { translate } from '../i18n';
 import ReactCountryFlag from 'react-country-flag';
 import {
-	Box, Grid, Paper, Avatar, Autocomplete, TextField,
+	Box, Grid, Paper, Avatar, Autocomplete, TextField, Chip, Input
 } from '@mui/material';
 import { KeyboardArrowDown, Edit, NotificationsNone } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
-import { BellIconComponent, RignIconComponent, WebsiteLogoIcon } from '../assets/icons';
+import { BellIconComponent, RignIconComponent, NotifBallIconComponent, WebsiteLogoIcon } from '../assets/icons';
 
 const top100Films = [
 	{ title: 'The Shawshank Redemption', year: 1994 },
@@ -137,7 +138,11 @@ const top100Films = [
   ];
 
 function Header() {
+	const navigate = useNavigate();
+	const fixedOptions = [top100Films[6]];
+
 	const [anchorEl, setAnchorEl] = useState(null);
+	const [value, setValue] = React.useState([...fixedOptions, top100Films[13]]);
 	const open = Boolean(anchorEl);
 
 	const handleClick = (event) => {
@@ -151,12 +156,13 @@ function Header() {
 		<Box sx={{ flexGrow: 1 }}>
 			<Container container spacing={3}>
 				<Grid item display={'flex'} flexDirection={'row'} xs="auto" sx={{ maxWidth: '179px' }}>
-					<Item sx={{ display: 'flex', flex: 1 }}>
-						<Avatar alt="Remy Sharp" src="" />
+					<Item sx={{ display: 'flex', flex: 1, mr: '15px' }}>
+						<Avatar alt="Remy Sharp" src="" sx={{ width: '46px', height: '46px' }} />
 					</Item>
-					<Item sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+					<Item sx={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, mr: '15px' }}>
 						{/* <BellWrapper> */}
 							<BellIconComponent style={{ width: '17px', height: '24px' }} />
+							<span style={{ width: '6px', height: '6px', backgroundColor: '#ef1b2b', borderRadius: '50%', position: 'absolute', top: '27px', left: '18px' }} />
 						{/* </BellWrapper> */}
 						{/* <RingWrapper> */}
 							<RignIconComponent style={{ width: '9px', height: '5px' }} />
@@ -170,37 +176,55 @@ function Header() {
 							cdnSuffix="svg"
 							title="US"
 							style={{
-								width: '40px',
-								height: '40px',
+								width: '24px',
+								height: '24px',
 								borderRadius: '50%',
 							}}
 						/>
 					</Item>
 				</Grid>
-				<Grid item display={'flex'} flexDirection={'row'} sx={{ flex: 1 }}>
-					<Autocomplete
+				<Grid item display={'flex'} flexDirection={'row'} justifyContent={'center'} alignItems={'center'} sx={{ flex: 1 }}>
+					{/* <Autocomplete
 						multiple
-						id="tags-standard"
+						id="fixed-tags-demo"
+						value={value}
+						onChange={(event, newValue) => {
+							setValue([
+							...fixedOptions,
+							...newValue.filter((option) => fixedOptions.indexOf(option) === -1),
+							]);
+						}}
 						options={top100Films}
 						getOptionLabel={(option) => option.title}
-						defaultValue={[top100Films[13]]}
-						renderInput={(params) => (
-							<TextField
-								{...params}
-								variant="standard"
-								label="Multiple values"
-								placeholder="Favorites"
+						renderTags={(tagValue, getTagProps) =>
+							tagValue.map((option, index) => (
+							<Chip
+								label={option.title}
+								{...getTagProps({ index })}
+								disabled={fixedOptions.indexOf(option) !== -1}
+								sx={{ border: 0 }}
 							/>
+							))
+						}
+						style={{ width: 'calc(100% - 200px)' }}
+						renderInput={(params) => (
+							<TextField 
+								{...params} 
+								placeholder="جست و جوی فیلم، سریال، انیمیشن، مستند، بازیگر و ..." 
+								sx={{ borderRadius: '15px', backgroundColor: '#f7f7f8' }} />
 						)}
-						sx={{
-							width: 'calc(100% - 200px)',
-							m: '0 auto',
-						}}
+					/> */}
+					<InputElement
+						placeholder="جست و جوی فیلم، سریال، انیمیشن، مستند، بازیگر و ..."
 					/>
 				</Grid>
 				<Grid item display={'flex'} flexDirection={'row'} xs="auto" sx={{ maxWidth: '130px' }}>
 					<Item>
-						<img src={WebsiteLogoIcon} alt="movie website" style={{ width: '74px', height: '46px' }} />
+						<Logo
+							src={WebsiteLogoIcon}
+							alt="movie website"
+							onClick={() => navigate('/')}
+						/>
 					</Item>
 					<Item sx={{ width: '72px', height: '72px', backgroundColor: '#0f131c' }}>
 						<div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'end' }}>
@@ -249,5 +273,22 @@ const Span = styled('span')({
 	display: 'block',
 	marginBottom: '8px',
 });
+
+const Logo = styled('img')({
+	width: '74px',
+	height: '46px',
+	cursor: 'pointer',
+});
+
+const InputElement = styled(Input)({
+	width: 'calc(100% - 200px)',
+	height: '46px',
+	backgroundColor: '#f7f7f8',
+	borderRadius: '17px',
+	border: 'none',
+	'& :hover': {
+		backgroundColor: '#f0f0f1',
+	}
+})
 
 export default Header;
